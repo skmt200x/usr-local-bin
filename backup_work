@@ -4,9 +4,21 @@
 
 _BACKUP_HOME=/mnt/nas
 
+#   Backup target (not endwith /).
+declare -a _BACKUP_TARGETS
+_BACKUP_TARGETS=(\
+    /etc/pdns \
+    /var/lib/pdns \
+    /etc/pdns-recursor \
+    /etc/dirsrv \
+    /etc/postfix \
+    )
 
 ### main
-
+_LHOME=$(dirname "$0");
+_LNAME=$(basename "$0");
+_LTITLE=$(basename "$0" .sh);
+_LAPATH=$(cd "$_LHOME"; pwd);
 _TIMESTAMP=$(date +"%Y-%m-%d.%H%M%S.%s");
 
 ### Check user (root)
@@ -31,5 +43,15 @@ LANG=C mount | grep "$_BACKUP_HOME" >/dev/null || {
     exit 2;
 }
 
-LANG=C mkdir -v -p "$_BACKUP_HOME/$_TIMESTAMP"
+echo "INFO: $_LNAME[$$] started.";
 
+mkdir -v -p "$_BACKUP_HOME/$_TIMESTAMP"
+
+for _TARGET in ${_BACKUP_TARGETS[@]}; do
+    echo "Backup \"$_TARGET\" to \"$_BACKUP_HOME/$_TIMESTAMP\"";
+    mkdir -v -p "$_BACKUP_HOME/${_TIMESTAMP}$_TARGET";
+    cp -v -f -Rp "$_TARGET"/* "$_BACKUP_HOME/${_TIMESTAMP}$_TARGET";
+done;
+
+echo "INFO: $_LNAME[$$] end.";
+exit 0;
