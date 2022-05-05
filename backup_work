@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+### configuration
+
+_BACKUP_HOME=/mnt/nas
+
+
+### main
+
+_TIMESTAMP=$(date +"%Y-%m-%d.%H%M%S.%s");
+
+### Check user (root)
+[ $(id -g) -eq 0 ] || {
+    echo "FATAL: This script must be run by root.">&2;
+    exit -1;
+}
+
+### Check configurtion
+echo "$_BACKUP_HOME" | egrep '^$|^(/|/bin|/boot|/dev|/etc|/home|/lib|/lib64|/media|/mnt|/opt|/proc|/root|/run|/sbin|/srv|/sys|/tmp|/usr|/var)$' >/dev/null 2>&1 && {
+    echo "FATAL: Can not use \"$_BACKUP_HOME\" (system dir such as "/", "/bin" and the other).">&2;
+    exit 3;
+}
+
+### Check if mounted.
+LANG=C mount | grep "$_BACKUP_HOME" >/dev/null || {
+    echo "ERR: $_BACKUP_HOME was not mounted.">&2;
+    exit 1;
+}
+[ -w "$_BACKUP_HOME" ] || {
+    echo "ERR: $_BACKUP_HOME is not writable.">&2;
+    exit 2;
+}
+
+LANG=C mkdir -v -p "$_BACKUP_HOME/$_TIMESTAMP"
+
