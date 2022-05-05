@@ -53,5 +53,7 @@ for _TARGET in ${_BACKUP_TARGETS[@]}; do
     cp -v -f -Rp "$_TARGET"/* "$_BACKUP_HOME/${_TIMESTAMP}$_TARGET";
 done;
 
+echo "$_BACKUP_HOME/$_TIMESTAMP">"$_BACKUP_HOME/LATEST";
+
 echo "INFO: $_LNAME[$$] end.";
 exit 0;
