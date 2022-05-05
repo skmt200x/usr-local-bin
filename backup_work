@@ -12,6 +12,7 @@ _BACKUP_TARGETS=(\
     /etc/pdns-recursor \
     /etc/dirsrv \
     /etc/postfix \
+    /etc/dovecot \
     )
 
 ### main
